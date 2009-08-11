@@ -1,6 +1,19 @@
 require 'erb'
 
 module Configy
+  mattr_accessor :load_path
+  
+  def self.load_path
+    if @load_path
+      return @load_path
+    elsif RAILS_ROOT 
+      "#{RAILS_ROOT}/config"
+    elsif RACK_ROOT
+      "#{RACK_ROOT}/config"
+    else
+      'config'
+    end
+  end
   
   def self.create(file)
     instance_eval <<-"end;"
@@ -11,11 +24,11 @@ module Configy
           @local_file_mtime
           
           def file_path
-            "#{RAILS_ROOT}/config/#{file.to_s}.yml"
+            "#{Configy.load_path}/#{file.to_s}.yml"
           end
           
           def local_file_path
-            "#{RAILS_ROOT}/config/#{file.to_s}.local.yml"
+            "#{Configy.load_path}/#{file.to_s}.local.yml"
           end
 
           def method_missing(param)
