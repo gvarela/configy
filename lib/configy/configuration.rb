@@ -1,17 +1,19 @@
 require 'erb'
 
 module Configy
-  mattr_accessor :load_path
+  def self.load_path=(val)
+    @@load_path = val
+  end
   
   def self.load_path
-    if @load_path
+    if @@load_path
       return @load_path
-    elsif RAILS_ROOT 
-      "#{RAILS_ROOT}/config"
-    elsif RACK_ROOT
-      "#{RACK_ROOT}/config"
+    elsif defined? RAILS_ROOT 
+      return "#{RAILS_ROOT}/config"
+    elsif defined? RACK_ROOT
+      return "#{RACK_ROOT}/config"
     else
-      'config'
+      return 'config'
     end
   end
   
