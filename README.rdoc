@@ -19,23 +19,23 @@ so they can contain some Ruby. It also checks for file modifications so you don'
 
 An example of a config file (config.yml):
 
-common:
-  admin_email: admin@domain.com
-  xml_rpc_url: http://domain.com:8000/
-  media_path: <%= RAILS_ROOT %>/tmp/media
+  common:
+    admin_email: admin@domain.com
+    xml_rpc_url: http://domain.com:8000/
+    media_path: <%= RAILS_ROOT %>/tmp/media
 
-development:
-  xml_rpc_url: http://localhost:8000/
+  development:
+    xml_rpc_url: http://localhost:8000/
 
-test:
-  xml_rpc_url: http://localhost:8008/
+  test:
+    xml_rpc_url: http://localhost:8008/
   
 In an initializer
-Configy.create(:config)
+  Configy.create(:config)
 
 Then, in the application you can use the config parameters like this:
 
-Config.xml_rpc_url
+  Config.xml_rpc_url
 
 So it means that you've got a Config object which holds all the configuration parameters defined. 
 It doesn't allow to change the values in the application code, BTW.
