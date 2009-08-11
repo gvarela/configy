@@ -69,7 +69,7 @@ module Configy
           def can_build_config?
             @app_config.nil? || 
             @file_mtime && @file_mtime < File.mtime(file_path) ||
-            @local_file_path && @local_file_path < File.mtime(local_file_path)
+            @local_file_mtime && @local_file_mtime < File.mtime(local_file_path)
           end
 
           def build_config
