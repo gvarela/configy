@@ -74,7 +74,21 @@ class ConfigyTest < Test::Unit::TestCase
         assert_equal_with_hash config, {'a' => '2', 'b' => 8, 'c' => 2, 'd' => 6}
       end
     end        
-  end  
+  end 
+  
+  def test_camelize
+    assert_equal 'Config', Configy.camelize('config')
+    assert_equal 'SomeConfig', Configy.camelize('some_config')
+    assert_equal 'SomeOtherConfig', Configy.camelize('some-other_config')
+  end
+  
+  def test_should_create_configuration_via_create
+    Configy.load_path = @dir
+    test_config( {'common' => {'a' => '1', 'b' => '2' }}, 'some_config' ) do |file, hash|
+      Configy.create('some_config')
+      assert_equal SomeConfig.b, '2'
+    end
+  end 
   
   def teardown
     begin

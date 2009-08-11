@@ -1,13 +1,20 @@
 require 'erb'
 
 module Configy
+  @@load_path = nil
+  @@section = nil
+  
   def self.load_path=(val)
     @@load_path = val
   end
   
+  def self.section=(val)
+    @@section = val
+  end
+  
   def self.load_path
     if @@load_path
-      return @load_path
+      return @@load_path
     elsif defined? RAILS_ROOT 
       return "#{RAILS_ROOT}/config"
     elsif defined? RACK_ROOT
@@ -17,20 +24,41 @@ module Configy
     end
   end
   
+  def self.section
+    if @@section
+      return @@section
+    elsif defined? RAILS_ENV 
+      return RAILS_ENV
+    elsif defined? RACK_ENV
+      return RACK_ENV
+    else
+      return 'development'
+    end
+  end
+  
+  def self.camelize(phrase)
+    camelized = phrase.gsub(/^[a-z]|\s+[a-z]|_+[a-z]|-+[a-z]/i) { |a| a.upcase }
+    camelized.gsub!(/\s/, '')
+    camelized.gsub!(/_/, '')
+    camelized.gsub!(/-/, '')
+    return camelized
+  end
+  
+  
   def self.create(file)
     instance_eval <<-"end;"
-      module ::#{file.to_s.classify}
+      module ::#{camelize(file.to_s)}
         class << self
           @app_config
           @file_mtime
           @local_file_mtime
           
           def file_path
-            "#{Configy.load_path}/#{file.to_s}.yml"
+            File.join(Configy.load_path, "#{file.to_s}.yml")
           end
           
           def local_file_path
-            "#{Configy.load_path}/#{file.to_s}.local.yml"
+            File.join(Configy.load_path, "#{file.to_s}.local.yml")
           end
 
           def method_missing(param)
@@ -54,7 +82,7 @@ module Configy
               @local_file_mtime = File.mtime(local_file_path)
             end
             
-            @app_config.use_section!(RAILS_ENV)
+            @app_config.use_section!(Configy.section)
           end  
         end          
       end
