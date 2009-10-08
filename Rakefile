@@ -5,7 +5,7 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "configy"
-    gem.summary = %Q{TODO}
+    gem.summary = %Q{simple application configuration}
     gem.email = "gvarela@gmail.com"
     gem.homepage = "http://github.com/gvarela/configy"
     gem.authors = ["Gabe Varela"]
