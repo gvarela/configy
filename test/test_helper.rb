@@ -1,4 +1,6 @@
 require 'rubygems'
+require 'yaml'
+require 'fileutils'
 require 'test/unit'
 
 $LOAD_PATH.unshift(File.dirname(__FILE__))
