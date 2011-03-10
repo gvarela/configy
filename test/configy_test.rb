@@ -2,12 +2,11 @@ require 'test_helper'
 
 class ConfigyTest < Test::Unit::TestCase
   def setup
-    @dir = File.dirname(__FILE__) + "/scratch/"
-    @files = []
+    Configy.load_path = scratch_dir
   end
 
   def test_should_read_from_yml
-    test_config 'common' => {'a' => '1', 'b' => '2'} do |file, hash|
+    with_config_file 'common' => {'a' => '1', 'b' => '2'} do |file, hash|
       config = Configy::Configuration.new(file)
       assert_equal_with_hash config, hash['common']
     end
@@ -18,8 +17,8 @@ class ConfigyTest < Test::Unit::TestCase
     assert_not_nil config
   end
 
-  def test_should_igonre_non_existent_section
-    test_config 'common' => {'a' => '1', 'b' => '2' } do |file, hash|
+  def test_should_ignore_non_existent_section
+    with_config_file 'common' => {'a' => '1', 'b' => '2' } do |file, hash|
       config = Configy::Configuration.new(file)
       config.use_section!('nonexistentsection')
       assert_equal config.b, '2'
@@ -27,20 +26,20 @@ class ConfigyTest < Test::Unit::TestCase
   end
 
   def test_should_parse_yaml_with_erb
-    test_config 'common' => {'a' => '1', 'b' => '<%= 2 + 2 %>' } do |file, hash|
+    with_config_file 'common' => {'a' => '1', 'b' => '<%= 2 + 2 %>' } do |file, hash|
       config = Configy::Configuration.new(file)
       assert_equal config.b, 4
     end
   end
 
   def test_should_override_params_with_given_section
-    test_config 'common' => {'a' => '1', 'b' => '<%= 2 + 2 %>'},
+    with_config_file 'common' => {'a' => '1', 'b' => '<%= 2 + 2 %>'},
                  'special' => {'a' => 1, 'b' => 5 } do |file, hash|
       config = Configy::Configuration.new(file)
       config.use_section!('special')
       assert_equal_with_hash config, hash['special']
     end
-    test_config 'common' => {'a' => '1', 'b' => '<%= 2 + 2 %>'},
+    with_config_file 'common' => {'a' => '1', 'b' => '<%= 2 + 2 %>'},
                 'special' => {'b' => 5 } do |file, hash|
       config = Configy::Configuration.new(file)
       config.use_section!('special')
@@ -49,9 +48,9 @@ class ConfigyTest < Test::Unit::TestCase
   end
 
   def test_should_ovveride_params_with_another_file
-    test_config({'common' => {'a' => '1', 'b' => '<%= 2 + 2 %>'},
+    with_config_file({'common' => {'a' => '1', 'b' => '<%= 2 + 2 %>'},
                  'special' => {'b' => 5 }}, 'config') do |file1, hash1|
-      test_config({'common' => {'a' => '2'},
+      with_config_file({'common' => {'a' => '2'},
                    'special' => {'b' => 8 }}, 'config.local') do |file2, hash2|
         config = Configy::Configuration.new(file1)
         assert_equal_with_hash config, {'a' => '1', 'b' => 4}
@@ -62,10 +61,10 @@ class ConfigyTest < Test::Unit::TestCase
   end
 
   def test_should_ovveride_params_with_another_file_and_use_proper_section
-    test_config({'common' => {'a' => '1', 'b' => '<%= 2 + 2 %>', 'c' => 2},
+    with_config_file({'common' => {'a' => '1', 'b' => '<%= 2 + 2 %>', 'c' => 2},
                  'special' => {'b' => 5, 'd' => 6 },
                  'extra' => {'f' => 4, 'a' => 8}}, 'config') do |file1, hash1|
-      test_config({'common' => {'a' => '2'},
+      with_config_file({'common' => {'a' => '2'},
                    'special' => {'b' => 8 }}, 'config.local') do |file2, hash2|
         config = Configy::Configuration.new
         config.use_file!(file1)
@@ -83,41 +82,10 @@ class ConfigyTest < Test::Unit::TestCase
   end
 
   def test_should_create_configuration_via_create
-    Configy.load_path = @dir
-    test_config( {'common' => {'a' => '1', 'b' => '2' }}, 'some_config' ) do |file, hash|
+    with_config_file( {'common' => {'a' => '1', 'b' => '2' }}, 'some_config' ) do |file, hash|
       Configy.create('some_config')
       assert_equal SomeConfig.b, '2'
     end
   end
 
-  def teardown
-    begin
-      FileUtils.rm @files
-    rescue
-    end
-  end
-
-  protected
-
-    def file_path(file)
-      @dir + file + '.yml'
-    end
-
-    def with_config_file(file, hash)
-      path = file_path(file)
-      File.open(path, 'w') { |f| f.write hash.to_yaml }
-      yield(path, hash)
-    ensure
-      FileUtils.rm path
-    end
-
-    def assert_equal_with_hash(config, hash)
-      hash.each do |key, value|
-        assert_equal config.send(key), value
-      end
-    end
-
-    def test_config(hash, file = 'config', &blk)
-      with_config_file(file, hash, &blk)
-    end
 end
