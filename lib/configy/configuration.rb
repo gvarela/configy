@@ -50,7 +50,7 @@ module Configy
 
 
   def self.create(file)
-    instance_eval <<-"end;"
+    instance_eval <<-"end;", __FILE__, __LINE__ + 1
       module ::#{camelize(file.to_s)}
         class << self
           @app_config
