@@ -29,7 +29,7 @@ Gem::Specification.new do |s|
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.4}
-  s.summary = %q{TODO}
+  s.summary = %q{Simple yaml driven configuration gem}
   s.test_files = [
     "test/configy_test.rb",
      "test/test_helper.rb"
