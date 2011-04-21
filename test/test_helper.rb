@@ -1,11 +1,10 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'fileutils'
-require 'test/unit'
+require 'minitest/autorun'
 require 'configy'
 
-class Test::Unit::TestCase
-
+module Configy::TestHelpers
   def assert_equal_with_hash(config, hash)
     hash.each do |key, value|
       assert_equal config.send(key), value
@@ -27,4 +26,8 @@ class Test::Unit::TestCase
   def scratch_dir
     @scratch_dir ||= File.expand_path("../scratch", __FILE__)
   end
+end
+
+class MiniTest::Unit::TestCase
+  include Configy::TestHelpers
 end

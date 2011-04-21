@@ -6,9 +6,11 @@ PATH
 GEM
   remote: http://rubygems.org/
   specs:
+    minitest (2.1.0)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   configy!
+  minitest (~> 2.1.0)

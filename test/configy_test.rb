@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ConfigyTest < Test::Unit::TestCase
+class ConfigyTest < MiniTest::Unit::TestCase
   def setup
     Configy.load_path = scratch_dir
   end
@@ -14,7 +14,7 @@ class ConfigyTest < Test::Unit::TestCase
 
   def test_should_ignore_non_existent_file
     config = Configy::Configuration.new('nonexsistentfile')
-    assert_not_nil config
+    refute_nil config
   end
 
   def test_should_ignore_non_existent_section

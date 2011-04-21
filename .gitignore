@@ -3,4 +3,5 @@
 coverage
 rdoc
 pkg
+.bundle
 !.gitkeep
