@@ -1,6 +1,7 @@
 require 'test_helper'
 
 class ConfigyTest < MiniTest::Unit::TestCase
+
   def setup
     Configy.load_path = scratch_dir
   end

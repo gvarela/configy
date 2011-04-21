@@ -1,7 +1,9 @@
 require 'rubygems'
 require 'bundler/setup'
-require 'fileutils'
 require 'minitest/autorun'
+require 'minitest/mock'
+require 'fileutils'
+require 'pathname'
 require 'configy'
 
 module Configy::TestHelpers
@@ -26,6 +28,13 @@ module Configy::TestHelpers
   def scratch_dir
     @scratch_dir ||= File.expand_path("../scratch", __FILE__)
   end
+
+  def with_const(const, value)
+    Object.const_set const, value
+    yield
+    Object.send :remove_const, const
+  end
+
 end
 
 class MiniTest::Unit::TestCase
