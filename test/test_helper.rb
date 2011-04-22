@@ -13,10 +13,10 @@ module Configy::TestHelpers
     end
   end
 
-  def with_config_file(hash, file='config')
+  def with_config_file(conf, file='config')
     path = file_path(file)
-    File.open(path, 'w') { |f| f.write hash.to_yaml }
-    yield(path, hash)
+    File.open(path, 'w') { |f| f.write conf.is_a?(String) ? conf : conf.to_yaml }
+    yield(path, conf)
   ensure
     FileUtils.rm path
   end
