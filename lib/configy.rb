@@ -1,43 +1,37 @@
 module Configy
+  autoload :Base, 'configy/base'
   autoload :ConfigFile, 'configy/config_file'
   autoload :Configuration, 'configy/configuration'
 
-  @@load_path = nil
-  @@section = nil
+  class << self
+    attr_writer :load_path, :section
 
-  def self.load_path=(val)
-    @@load_path = val
-  end
-
-  def self.section=(val)
-    @@section = val
-  end
-
-  def self.load_path
-    if @@load_path
-      return @@load_path
-    elsif defined? Rails
-      return Rails.root.join("config")
-    elsif defined? RAILS_ROOT
-      return "#{RAILS_ROOT}/config"
-    elsif defined? RACK_ROOT
-      return "#{RACK_ROOT}/config"
-    else
-      return 'config'
+    def load_path
+      if @load_path
+        @load_path
+      elsif defined? Rails
+        Rails.root.join("config")
+      elsif defined? RAILS_ROOT
+        "#{RAILS_ROOT}/config"
+      elsif defined? RACK_ROOT
+        "#{RACK_ROOT}/config"
+      else
+        'config'
+      end
     end
-  end
 
-  def self.section
-    if @@section
-      return @@section
-    elsif defined? Rails
-      return Rails.env
-    elsif defined? RAILS_ENV
-      return RAILS_ENV
-    elsif defined? RACK_ENV
-      return RACK_ENV
-    else
-      return 'development'
+    def section
+      if @section
+        @section
+      elsif defined? Rails
+        Rails.env
+      elsif defined? RAILS_ENV
+        RAILS_ENV
+      elsif defined? RACK_ENV
+        RACK_ENV
+      else
+        'development'
+      end
     end
   end
 
@@ -49,7 +43,8 @@ module Configy
     return camelized
   end
 
+  # The main interface for creating Configy instances
   def self.create(file)
-    Object.const_set( camelize(file.to_s), ConfigFile.new(file) )
+    Object.const_set( camelize(file.to_s), Configy::Base.new(file, section, load_path) )
   end
 end
