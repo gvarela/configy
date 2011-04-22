@@ -1,7 +1,10 @@
 module Configy
   autoload :Base, 'configy/base'
   autoload :ConfigFile, 'configy/config_file'
-  autoload :Configuration, 'configy/configuration'
+  autoload :ConfigStore, 'configy/config_store'
+
+  class ConfigyError < StandardError; end
+  class ConfigParamNotFound < ConfigyError; end
 
   class << self
     attr_writer :load_path, :section
