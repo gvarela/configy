@@ -3,7 +3,8 @@ require 'test_helper'
 class ConfigyTest < MiniTest::Unit::TestCase
 
   def setup
-    Configy.load_path = scratch_dir
+    Configy.load_path    = scratch_dir
+    Configy.cache_config = nil
   end
 
   def test_camelize
@@ -18,6 +19,22 @@ class ConfigyTest < MiniTest::Unit::TestCase
       assert Object.const_defined?(:AppConfig)
       assert_equal AppConfig.b, '2'
     end
+  end
+
+  def test_cache_config_defaults
+    Configy.section = 'production'
+    assert_equal true, Configy.cache_config
+
+    Configy.section = 'development'
+    assert_equal false, Configy.cache_config
+  end
+
+  def test_should_be_able_to_manually_set_cache_config
+    Configy.cache_config = true
+    Configy.create('dummy')
+
+    assert_equal true, Configy.cache_config
+    assert_equal true, Dummy.cache_config?
   end
 
 end

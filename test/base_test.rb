@@ -59,7 +59,7 @@ special:
         assert_equal 'bar', config.b
 
         # Simulate 1 second going by
-        config.send(:compiled_config).mtime -= 1
+        config.send(:config).mtime -= 1
 
         File.open(file1, 'w') do |f|
           f.puts( {'common' => {'a' => 'foo*'} }.to_yaml )
@@ -68,13 +68,43 @@ special:
         assert_equal 'foo*', config.a
 
         # Simulate 1 second going by
-        config.send(:compiled_config).mtime -= 1
+        config.send(:config).mtime -= 1
 
         File.open(file2, 'w') do |f|
           f.puts( {'special' => {'b' => 'bar*'} }.to_yaml )
         end
 
         assert_equal 'bar*', config.b
+
+      end
+    end
+  end
+
+  def test_should_not_reload_a_config_file_if_changed_and_cache_config_is_true
+    with_config_file({ 'common' => {'a' => 'foo'} }, 'config') do |file1, hash1|
+      with_config_file({ 'special' => {'b' => 'bar'} }, 'config.local') do |file2, hash2|
+
+        config = Configy::Base.new('config', 'special', scratch_dir, true)
+        assert_equal 'foo', config.a
+        assert_equal 'bar', config.b
+
+        # Simulate 1 second going by
+        config.send(:config).mtime -= 1
+
+        File.open(file1, 'w') do |f|
+          f.puts( {'common' => {'a' => 'foo*'} }.to_yaml )
+        end
+
+        assert_equal 'foo', config.a
+
+        # Simulate 1 second going by
+        config.send(:config).mtime -= 1
+
+        File.open(file2, 'w') do |f|
+          f.puts( {'special' => {'b' => 'bar*'} }.to_yaml )
+        end
+
+        assert_equal 'bar', config.b
 
       end
     end

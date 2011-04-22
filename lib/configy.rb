@@ -7,7 +7,7 @@ module Configy
   class ConfigParamNotFound < ConfigyError; end
 
   class << self
-    attr_writer :load_path, :section
+    attr_writer :load_path, :section, :cache_config
 
     def load_path
       if @load_path
@@ -36,6 +36,15 @@ module Configy
         'development'
       end
     end
+
+    # By default, only cache the config when section is production
+    def cache_config
+      if @cache_config
+        @cache_config
+      else
+        section == 'production'
+      end
+    end
   end
 
   def self.camelize(phrase)
@@ -48,6 +57,6 @@ module Configy
 
   # The main interface for creating Configy instances
   def self.create(file)
-    Object.const_set( camelize(file.to_s), Configy::Base.new(file, section, load_path) )
+    Object.const_set( camelize(file.to_s), Configy::Base.new(file, section, load_path, cache_config) )
   end
 end

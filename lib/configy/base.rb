@@ -2,34 +2,36 @@ require 'pathname'
 
 module Configy
   class Base
-    def initialize(filename, section, load_path)
-      @load_path = load_path # Directory where config file(s) live
-      @section   = section   # Section of the config file to use
-      @filename  = filename  # Filename of the config
+    def initialize(filename, section, load_path, cache_config=false)
+      @load_path    = load_path    # Directory where config file(s) live
+      @section      = section      # Section of the config file to use
+      @filename     = filename     # Filename of the config
+      @cache_config = cache_config # Whether to cache the config or reload when stale
     end
 
-    # FIXME: We are doing a system call (File.mtime) every time a config
-    # value is accessed. Perhaps keep a last checked value and only check
-    # after some time has passed?
     def method_missing(name, *args, &block)
       if args.size.zero?
-        compile if should_compile?
-        @compiled_config[name]
+        reload if !cache_config? && stale?
+        config[name]
       else
         super
       end
     end
 
-    protected
-
-    def compiled_config
-      @compiled_config || compile
-    end
-
-    def compile
-      @compiled_config = config_file.config.merge(local_config_file.config).tap do |c|
+    def reload
+      @config = config_file.config.merge(local_config_file.config).tap do |c|
         c.mtime = most_recent_mtime
       end
+    end
+
+    def cache_config?
+      @cache_config
+    end
+
+    protected
+
+    def config
+      @config ||= reload
     end
 
     # Represents config file, ie (config/app_config.yml)
@@ -50,8 +52,8 @@ module Configy
       @local_file_path ||= Pathname.new(@load_path) + "#{@filename}.local.yml"
     end
 
-    def should_compile?
-      compiled_config.mtime < most_recent_mtime
+    def stale?
+      config.mtime < most_recent_mtime
     end
 
     def most_recent_mtime
