@@ -4,18 +4,25 @@ require 'yaml'
 module Configy
   class Configuration
 
-    def initialize(file = nil)
-      @sections = {}
-      @params = {}
+    def initialize(file=nil)
+      @sections, @params = {}, {}
       use_file!(file) if file
     end
 
     def use_file!(file)
       begin
         hash = YAML::load(ERB.new(IO.read(file)).result)
-        @sections.merge!(hash) {|key, old_val, new_val| (old_val || new_val).merge new_val }
-        @params.merge!(@sections['common'])
-      rescue; end
+        merge(hash)
+      rescue
+      end
+    end
+
+    def merge(other)
+      @sections.merge!(other) do |key, old_val, new_val|
+        (old_val || new_val).merge(new_val)
+      end
+
+      @params.merge!(@sections['common'])
     end
 
     def use_section!(section)
