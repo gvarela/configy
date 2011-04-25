@@ -21,9 +21,9 @@ class ConfigyTest < MiniTest::Unit::TestCase
     end
   end
 
-  def test_cache_config_defaults
+  def test_cache_config_always_defaults_to_false
     Configy.section = 'production'
-    assert_equal true, Configy.cache_config
+    assert_equal false, Configy.cache_config
 
     Configy.section = 'development'
     assert_equal false, Configy.cache_config

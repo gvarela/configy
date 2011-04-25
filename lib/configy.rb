@@ -37,13 +37,9 @@ module Configy
       end
     end
 
-    # By default, only cache the config when section is production
     def cache_config
-      if @cache_config
-        @cache_config
-      else
-        section == 'production'
-      end
+      @cache_config = false if @cache_config.nil?
+      @cache_config
     end
   end
 
