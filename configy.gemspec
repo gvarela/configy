@@ -1,10 +1,10 @@
 
 Gem::Specification.new do |s|
   s.name = %q{configy}
-  s.version = "1.0.0"
+  s.version = "1.0.1"
 
   s.required_rubygems_version = ">= 1.3.6"
-  s.authors = ["Gabe Varela", "Brian Marini"]
+  s.authors = ["Gabe Varela", "Ben Marini"]
   s.date = %q{2011-04-21}
   s.email = %q{gvarela@gmail.com}
   s.summary = %q{Simple yaml driven configuration gem}
