@@ -5,10 +5,11 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "configy"
-    gem.summary = %Q{simple application configuration}
+    gem.summary = %Q{Simple yaml driven configuration gem}
     gem.email = "gvarela@gmail.com"
     gem.homepage = "http://github.com/gvarela/configy"
     gem.authors = ["Gabe Varela"]
+    gem.add_development_dependency "minitest", "~> 2.1.0"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
 
@@ -28,14 +29,14 @@ begin
   Rcov::RcovTask.new do |test|
     test.libs << 'test'
     test.pattern = 'test/**/*_test.rb'
+    test.rcov_opts << '--exclude "gems/*"'
     test.verbose = true
   end
 rescue LoadError
   task :rcov do
-    abort "RCov is not available. In order to run rcov, you must: sudo gem install spicycode-rcov"
+    abort "RCov is not available. In order to run rcov, you must: gem install rcov"
   end
 end
-
 
 task :default => :test
 
