@@ -17,6 +17,9 @@ so they can contain some Ruby. It also checks for file modifications so you don'
 
 == Usage
 
+Configy provides an [optional] generator.
+ rails g configy:install
+
 An example of a config file (config.yml):
 
   common:
@@ -31,11 +34,11 @@ An example of a config file (config.yml):
     xml_rpc_url: http://localhost:8008/
   
 In an initializer
-  Configy.create(:config)
+  Configy.create(:app_config)
 
 Then, in the application you can use the config parameters like this:
 
-  Config.xml_rpc_url
+  AppConfig.xml_rpc_url
 
 So it means that you've got a Config object which holds all the configuration parameters defined. 
 It doesn't allow to change the values in the application code, BTW.
