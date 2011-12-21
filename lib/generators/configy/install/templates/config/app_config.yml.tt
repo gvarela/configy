@@ -2,7 +2,7 @@
 # common:
 #   admin_email: admin@domain.com
 #   xml_rpc_url: http://domain.com:8000/
-#   media_path: <%%= RAILS_ROOT %>/tmp/media
+#   media_path: <%%= Rails.root %>/tmp/media
 # 
 # development:
 #   xml_rpc_url: http://localhost:8000/
