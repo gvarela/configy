@@ -21,6 +21,15 @@ class ConfigyTest < MiniTest::Unit::TestCase
     end
   end
 
+  def test_should_create_a_configuration_class_based_on_a_yaml_file_within_a_parent_module
+    with_config_file( {'common' => {'a' => '1', 'b' => '2' }}, 'app_config' ) do |file, hash|
+      Object.const_set('MyApp', Module)
+      Configy.create('app_config', MyApp)
+      assert MyApp.const_defined?(:AppConfig)
+      assert_equal MyApp::AppConfig.b, '2'
+    end
+  end
+
   def test_cache_config_always_defaults_to_false
     Configy.section = 'production'
     assert_equal false, Configy.cache_config

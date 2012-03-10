@@ -52,7 +52,7 @@ module Configy
   end
 
   # The main interface for creating Configy instances
-  def self.create(file)
-    Object.const_set( camelize(file.to_s), Configy::Base.new(file, section, load_path, cache_config) )
+  def self.create(file, parent=Object)
+    parent.const_set( camelize(file.to_s), Configy::Base.new(file, section, load_path, cache_config) )
   end
 end
