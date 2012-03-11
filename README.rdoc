@@ -1,5 +1,35 @@
 == Configy
 
+This gem is deprecated. Rails 3.0+ now allows you to add arbitrary fields to the Application configuration object. Or just write your own configuration DSL in Ruby.
+
+Example:
+    module MyModule
+      class Configuration
+        def initialize
+          self.configuration_1 = 'foo'
+          self.configuration_2 = 'bar'
+        end
+    
+        attr_accessor :configuration_1, :configuration_2
+      end
+
+      class << self
+        attr_accessor :configuration
+    
+        # Configure MyModule
+        #
+        def configure
+          self.configuration ||= Configuration.new
+          yield self.configuration
+        end
+      end
+    end
+
+Then in config/initializers/my_module.rb
+    MyModule.configure do |config|
+     config.configuration_1 = 'blah'
+    end
+
 == Description
 
 It allows to have a file (config/config.yml) with application configuration parameters.
