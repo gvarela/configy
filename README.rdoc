@@ -1,4 +1,4 @@
-== Configy
+== Configy [deprecated]
 
 This gem is deprecated. Rails 3.0+ now allows you to add arbitrary fields to the Application configuration object. Or just write your own configuration DSL in Ruby.
 
